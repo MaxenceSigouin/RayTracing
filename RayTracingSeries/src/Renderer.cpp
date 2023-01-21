@@ -38,9 +38,6 @@ void Renderer::Render()
 
 uint32_t Renderer::PerPixel(glm::vec2 coord) 
 {
-	uint8_t red = (uint8_t)(coord.x * 255.0f);
-	uint8_t green = (uint8_t)(coord.y * 255.0f);
-
 	glm::vec3 rayOrigin(0.0f, 0.0f, 2.0f);
 	glm::vec3 rayDirection(coord.x, coord.y, -1.0f);
 	float radius = 0.5f;
