@@ -52,7 +52,7 @@ void Renderer::Render()
 
 glm::vec4 Renderer::PerPixel(glm::vec2 coord) 
 {
-	glm::vec3 rayOrigin(0.0f, 0.0f, 2.0f);
+	glm::vec3 rayOrigin(0.0f, 0.0f, 1.0f);
 	glm::vec3 rayDirection(coord.x, coord.y, -1.0f);
 	float radius = 0.5f;
 
@@ -72,7 +72,21 @@ glm::vec4 Renderer::PerPixel(glm::vec2 coord)
 
 	float discriminant = b * b - 4.0f * a * c;
 
-	if (discriminant >= 0.0f) return glm::vec4(1, 0, 1, 1);
+	if (discriminant < 0.0f) return glm::vec4(0, 0, 0, 1);
 
-	return glm::vec4(0, 0, 0, 1);
+	// (-b +- sqrt(discriminant)) / 2a
+
+	float t0 = (-b + glm::sqrt(discriminant)) / (2.0f * a);
+	float t1 = (-b - glm::sqrt(discriminant)) / (2.0f * a);
+
+	// T1 is always gonna be closest so no need to calculate for t0 too
+	glm::vec3 hitPoint = rayOrigin + rayDirection * t1;
+	glm::vec3 normal = glm::normalize(hitPoint);
+
+	glm::vec3 lightDir = glm::normalize(glm::vec3( - 1, -1, -1));
+	float d = glm::max(glm::dot(normal, -lightDir), 0.0f); // == cos(angle)
+
+	glm::vec3 sphereColor(0, 0, 1);
+	sphereColor *= d;
+	return glm::vec4(sphereColor, 1);
 }
