@@ -65,9 +65,11 @@ glm::vec4 Renderer::TraceRay(const Ray& ray)
 	// r = radius
 	// t = hit distance
 
+	glm::vec3 origin = ray.Origin - glm::vec3(-0.5f, 0.0f, 0.0f);
+
 	float a = glm::dot(ray.Direction, ray.Direction);
-	float b = 2.0f * glm::dot(ray.Origin, ray.Direction);
-	float c = glm::dot(ray.Origin, ray.Origin) - radius * radius;
+	float b = 2.0f * glm::dot(origin, ray.Direction);
+	float c = glm::dot(origin, origin) - radius * radius;
 
 	// Quadratic formula discriminant:
 	// b^2 - 4ac
@@ -82,7 +84,7 @@ glm::vec4 Renderer::TraceRay(const Ray& ray)
 	float t1 = (-b - glm::sqrt(discriminant)) / (2.0f * a);
 
 	// T1 is always gonna be closest so no need to calculate for t0 too
-	glm::vec3 hitPoint = ray.Origin + ray.Direction * t1;
+	glm::vec3 hitPoint = origin + ray.Direction * t1;
 	glm::vec3 normal = glm::normalize(hitPoint);
 
 	glm::vec3 lightDir = glm::normalize(glm::vec3( - 1, -1, -1));
