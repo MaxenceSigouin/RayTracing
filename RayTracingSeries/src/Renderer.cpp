@@ -1,5 +1,7 @@
 #include "Renderer.h"
+
 #include <glm/glm.hpp>
+#include <iostream>
 
 #include "Walnut/Random.h"
 #include "Ray.h"
@@ -65,34 +67,44 @@ glm::vec4 Renderer::TraceRay(const Scene& scene, const Ray& ray)
 
 	if (scene.Spheres.size() == 0) return glm::vec4(0, 0, 0, 1);
 
-	const Sphere& sphere = scene.Spheres[0];
+	const Sphere* closestSphere = nullptr;
+	float hitDistance = std::numeric_limits<float>::max();
+	for (const Sphere& sphere : scene.Spheres)
+	{
+		glm::vec3 origin = ray.Origin - sphere.Position;
 
-	glm::vec3 origin = ray.Origin - sphere.Position;
+		float a = glm::dot(ray.Direction, ray.Direction);
+		float b = 2.0f * glm::dot(origin, ray.Direction);
+		float c = glm::dot(origin, origin) - sphere.Radius * sphere.Radius;
 
-	float a = glm::dot(ray.Direction, ray.Direction);
-	float b = 2.0f * glm::dot(origin, ray.Direction);
-	float c = glm::dot(origin, origin) - sphere.Radius * sphere.Radius;
+		// Quadratic formula discriminant:
+		// b^2 - 4ac
 
-	// Quadratic formula discriminant:
-	// b^2 - 4ac
+		float discriminant = b * b - 4.0f * a * c;
 
-	float discriminant = b * b - 4.0f * a * c;
+		if (discriminant < 0.0f) continue;
 
-	if (discriminant < 0.0f) return glm::vec4(0, 0, 0, 1);
+		// (-b +- sqrt(discriminant)) / 2a
 
-	// (-b +- sqrt(discriminant)) / 2a
+		float t = (-b - glm::sqrt(discriminant)) / (2.0f * a);
+		if (t < hitDistance)
+		{
+			hitDistance = t;
+			closestSphere = &sphere;
+		}
+	}
 
-	float t0 = (-b + glm::sqrt(discriminant)) / (2.0f * a);
-	float t1 = (-b - glm::sqrt(discriminant)) / (2.0f * a);
+	if (closestSphere == nullptr) return glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
 
 	// T1 is always gonna be closest so no need to calculate for t0 too
-	glm::vec3 hitPoint = origin + ray.Direction * t1;
+	glm::vec3 origin = ray.Origin - closestSphere->Position;
+	glm::vec3 hitPoint = origin + ray.Direction * hitDistance;
 	glm::vec3 normal = glm::normalize(hitPoint);
 
 	glm::vec3 lightDir = glm::normalize(glm::vec3( - 1, -1, -1));
 	float lightIntensity = glm::max(glm::dot(normal, -lightDir), 0.0f); // == cos(angle)
 
-	glm::vec3 sphereColor = sphere.Albedo;
+	glm::vec3 sphereColor = closestSphere->Albedo;
 	sphereColor *= lightIntensity;
 	return glm::vec4(sphereColor, 1);
 }
