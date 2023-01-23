@@ -7,16 +7,23 @@
 #include "Renderer.h"
 #include "Camera.h"
 
+#include "glm/gtc/type_ptr.hpp"
+
 using namespace Walnut;
 
 class ExampleLayer : public Walnut::Layer
 {
 public:
-	ExampleLayer() : m_Camera(45.0f, 0.1f, 100.0f) {}
+	ExampleLayer() : m_Camera(45.0f, 0.1f, 100.0f) 
+	{
+		m_Scene.Spheres.push_back(Sphere{ {0.0f, 0.0f, 0.0f}, 0.5f, {1.0f, 1.0f, 0.0f} });
+	}
+
 	virtual void OnUpdate(float ts) override
 	{
 		m_Camera.OnUpdate(ts);
 	}
+
 	virtual void OnUIRender() override
 	{
 		ImGui::Begin("Settings");
@@ -25,6 +32,12 @@ public:
 		{
 			Render();
 		}
+		ImGui::End();
+
+		ImGui::Begin("Scene");
+		ImGui::DragFloat ("Radius", &m_Scene.Spheres[0].Radius, 0.1f);
+		ImGui::DragFloat3("Position", glm::value_ptr(m_Scene.Spheres[0].Position), 0.1f);
+		ImGui::ColorEdit3("Albedo",   glm::value_ptr(m_Scene.Spheres[0].Albedo));
 		ImGui::End();
 
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
