@@ -16,8 +16,8 @@ class ExampleLayer : public Walnut::Layer
 public:
 	ExampleLayer() : m_Camera(45.0f, 0.1f, 100.0f) 
 	{
-		m_Scene.Spheres.push_back(Sphere{ {0.0f, 0.0f,  0.0f}, 0.5f, {1.0f, 0.0f, 1.0f} });
-		m_Scene.Spheres.push_back(Sphere{ {1.0f, 0.0f, -5.0f}, 1.5f, {0.2f, 0.3f, 1.0f} });
+		m_Scene.Spheres.push_back(Sphere{ {0.0f,  0.0f,     0.0f}, 1.0f,     { {1.0f, 0.0f, 1.0f} }});
+		m_Scene.Spheres.push_back(Sphere{ {0.0f, -10001.0f, 0.0f}, 10000.0f, { {0.2f, 0.3f, 1.0f} }});
 	}
 
 	virtual void OnUpdate(float ts) override
@@ -29,10 +29,6 @@ public:
 	{
 		ImGui::Begin("Settings");
 		ImGui::Text("Last render: %.3fms", m_LastRenderTime);
-		if (ImGui::Button("Render"))
-		{
-			Render();
-		}
 		ImGui::End();
 
 		ImGui::Begin("Scene");
@@ -40,9 +36,11 @@ public:
 		{
 			ImGui::PushID(i);
 
-			ImGui::DragFloat("Radius", &m_Scene.Spheres[i].Radius, 0.01f);
-			ImGui::DragFloat3("Position", glm::value_ptr(m_Scene.Spheres[i].Position), 0.01f);
-			ImGui::ColorEdit3("Albedo",   glm::value_ptr(m_Scene.Spheres[i].Albedo));
+			ImGui::DragFloat ("Radius",    &m_Scene.Spheres[i].Radius, 0.01f);
+			ImGui::DragFloat3("Position",  glm::value_ptr(m_Scene.Spheres[i].Position), 0.01f);
+			ImGui::ColorEdit3("Albedo",    glm::value_ptr(m_Scene.Spheres[i].Mat.Albedo));
+			ImGui::DragFloat ("Roughness", &m_Scene.Spheres[i].Mat.Roughness, 0.001f);
+			ImGui::DragFloat ("Metallic",  &m_Scene.Spheres[i].Mat.Metallic, 0.001f);
 
 			ImGui::Separator();
 
