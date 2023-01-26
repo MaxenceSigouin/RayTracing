@@ -16,8 +16,16 @@ class ExampleLayer : public Walnut::Layer
 public:
 	ExampleLayer() : m_Camera(45.0f, 0.1f, 100.0f) 
 	{
-		m_Scene.Spheres.push_back(Sphere{ {0.0f,  0.0f,     0.0f}, 1.0f,     { {1.0f, 0.0f, 1.0f} }});
-		m_Scene.Spheres.push_back(Sphere{ {0.0f, -10001.0f, 0.0f}, 10000.0f, { {0.2f, 0.3f, 1.0f} }});
+		Material& pinkSphere = m_Scene.Materials.emplace_back();
+		pinkSphere.Albedo    = { 1.0f, 0.0f, 1.0f };
+		pinkSphere.Roughness = 0.0f;
+
+		Material& blueSphere = m_Scene.Materials.emplace_back();
+		blueSphere.Albedo    = { 0.2f, 0.3f, 1.0f };
+		blueSphere.Roughness = 0.1f;
+
+		m_Scene.Spheres.push_back(Sphere{ {0.0f,  0.0f,   0.0f}, 1.0f,   0 });
+		m_Scene.Spheres.push_back(Sphere{ {0.0f, -101.0f, 0.0f}, 100.0f, 1 });
 	}
 
 	virtual void OnUpdate(float ts) override
@@ -36,11 +44,21 @@ public:
 		{
 			ImGui::PushID(i);
 
-			ImGui::DragFloat ("Radius",    &m_Scene.Spheres[i].Radius, 0.01f);
-			ImGui::DragFloat3("Position",  glm::value_ptr(m_Scene.Spheres[i].Position), 0.01f);
-			ImGui::ColorEdit3("Albedo",    glm::value_ptr(m_Scene.Spheres[i].Mat.Albedo));
-			ImGui::DragFloat ("Roughness", &m_Scene.Spheres[i].Mat.Roughness, 0.001f);
-			ImGui::DragFloat ("Metallic",  &m_Scene.Spheres[i].Mat.Metallic, 0.001f);
+			ImGui::DragFloat ("Radius",   &m_Scene.Spheres[i].Radius,                  0.01f);
+			ImGui::DragFloat3("Position", glm::value_ptr(m_Scene.Spheres[i].Position), 0.01f);
+			ImGui::DragInt("Material",    &m_Scene.Spheres[i].materialIndex,           1.0f, 0.0f, (int)m_Scene.Materials.size() - 1);
+
+			ImGui::Separator();
+
+			ImGui::PopID();
+		}
+		for (size_t i = 0; i < m_Scene.Materials.size(); i++)
+		{
+			ImGui::PushID(i);
+
+			ImGui::ColorEdit3("Albedo",    glm::value_ptr(m_Scene.Materials[i].Albedo));
+			ImGui::DragFloat ("Roughness", &m_Scene.Materials[i].Roughness, 0.001f, 0.0f, 1.0f);
+			ImGui::DragFloat ("Metallic",  &m_Scene.Materials[i].Metallic,  0.001f, 0.0f, 1.0f);
 
 			ImGui::Separator();
 
