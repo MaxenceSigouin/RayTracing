@@ -1,6 +1,6 @@
-# Walnut App Template
+# RayTracing Tutorial
 
-This is a simple app template for [Walnut](https://github.com/TheCherno/Walnut) - unlike the example within the Walnut repository, this keeps Walnut as an external submodule and is much more sensible for actually building applications. See the [Walnut](https://github.com/TheCherno/Walnut) repository for more details.
+This project follows the ray tracing tutorial series by The Cherno (https://www.youtube.com/playlist?list=PLlrATfBNZ98edc5GshdBtREv5asFW3yXl). The code present in this repository is not my original creation.
 
 ## Getting Started
-Once you've cloned, you can customize the `premake5.lua` and `WalnutApp/premake5.lua` files to your liking (eg. change the name from "WalnutApp" to something else).  Once you're happy, run `scripts/Setup.bat` to generate Visual Studio 2022 solution/project files. Your app is located in the `WalnutApp/` directory, which some basic example code to get you going in `WalnutApp/src/WalnutApp.cpp`. I recommend modifying that WalnutApp project to create your own application, as everything should be setup and ready to go.
+Once you've cloned, run `scripts/Setup.bat` to generate Visual Studio 2022 solution/project files. Make sure you have the Vulkan SDK installed and a graphics card that supports it. To run the project, simply open the Visual Studio solution and click on the play button or the associated keyboard shortcut.
