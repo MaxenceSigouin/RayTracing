@@ -24,8 +24,15 @@ public:
 		blueSphere.Albedo    = { 0.2f, 0.3f, 1.0f };
 		blueSphere.Roughness = 0.1f;
 
+		Material& orangeSphere = m_Scene.Materials.emplace_back();
+		orangeSphere.Albedo = { 0.8f, 0.5f, 0.2f };
+		orangeSphere.Roughness = 0.1f;
+		orangeSphere.EmissionColor = { 0.8f, 0.5f, 0.2f };
+		orangeSphere.EmissionPower = 2.0f;
+
 		m_Scene.Spheres.push_back(Sphere{ {0.0f,  0.0f,   0.0f}, 1.0f,   0 });
 		m_Scene.Spheres.push_back(Sphere{ {0.0f, -101.0f, 0.0f}, 100.0f, 1 });
+		m_Scene.Spheres.push_back(Sphere{ {2.0f,  0.0f,   0.0f}, 1.0f,   2 });
 	}
 
 	virtual void OnUpdate(float ts) override
@@ -52,7 +59,7 @@ public:
 
 			ImGui::DragFloat ("Radius",   &m_Scene.Spheres[i].Radius,                  0.01f);
 			ImGui::DragFloat3("Position", glm::value_ptr(m_Scene.Spheres[i].Position), 0.01f);
-			ImGui::DragInt("Material",    &m_Scene.Spheres[i].materialIndex,           1.0f, 0.0f, (int)m_Scene.Materials.size() - 1);
+			ImGui::DragInt   ("Material", &m_Scene.Spheres[i].materialIndex,           1.0f, 0.0f, (int)m_Scene.Materials.size() - 1);
 
 			ImGui::Separator();
 
@@ -62,9 +69,13 @@ public:
 		{
 			ImGui::PushID(i);
 
-			ImGui::ColorEdit3("Albedo",    glm::value_ptr(m_Scene.Materials[i].Albedo));
-			ImGui::DragFloat ("Roughness", &m_Scene.Materials[i].Roughness, 0.001f, 0.0f, 1.0f);
-			ImGui::DragFloat ("Metallic",  &m_Scene.Materials[i].Metallic,  0.001f, 0.0f, 1.0f);
+			Material& material = m_Scene.Materials[i];
+
+			ImGui::ColorEdit3("Albedo",         glm::value_ptr(material.Albedo));
+			ImGui::DragFloat ("Roughness",      &material.Roughness, 0.001f, 0.0f, 1.0f);
+			ImGui::DragFloat ("Metallic",       &material.Metallic,  0.001f, 0.0f, 1.0f);
+			ImGui::ColorEdit3("Emission Color", glm::value_ptr(material.EmissionColor));
+			ImGui::DragFloat ("Emission Power", &material.EmissionPower,  0.001f, 0.0f, FLT_MAX);
 
 			ImGui::Separator();
 
